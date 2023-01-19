@@ -8,4 +8,4 @@ chat, but when you wanted to find out when the movie was, you would have to scro
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/Ncorbet19/ITAS282_finalProject_NC)
 ![GitHub issues](https://img.shields.io/github/issues/Ncorbet19/ITAS282_finalProject_NC)
-![AppVeyor tests](https://img.shields.io/appveyor/tests/Ncorbet19/ITAS282_finalProject_NC)
+![AppVeyor tests](https://img.shields.io/github/actions/Ncorbet19/ITAS282_finalProject_NC)
