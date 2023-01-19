@@ -6,4 +6,4 @@
   This idea came to me because my friends and I would plan movie nights in our group
 chat, but when you wanted to find out when the movie was, you would have to scroll thru thousands of messages to find it, so I wanted to make a movie night scheduling app it keeps it in one very neat place. 
 
-https://img.shields.io/github/repo-size/Ncorbet19/ITAS282_finalProject_NC
+![GitHub repo size](https://img.shields.io/github/repo-size/Ncorbet19/ITAS282_finalProject_NC)
