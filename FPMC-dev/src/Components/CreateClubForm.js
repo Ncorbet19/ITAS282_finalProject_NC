@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
-const CreateClubForm = () => {
+const CreateClubForm = ({ onClubIdChange }) => {
   const [clubName, setClubName] = useState('');
   const [clubPassword, setClubPassword] = useState('');
 
@@ -21,8 +21,10 @@ const CreateClubForm = () => {
       const docRef = await addDoc(collection(db, 'clubs'), {
         name: clubName,
         password: clubPassword,
+        users: [],
       });
       console.log('Document written with ID: ', docRef.id);
+      onClubIdChange(docRef.id);
       setClubName('');
       setClubPassword('');
     } catch (error) {

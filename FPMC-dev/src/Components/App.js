@@ -1,18 +1,20 @@
-// import './css/App.css';
+import { useState } from 'react';
 import CreateClubForm from './CreateClubForm';
-import Signup from './Signup';
-import Signin from './Signin';
-
-
+import UserList from './Users';
 
 function App() {
-  return <>
-  <CreateClubForm />
-  <Signup />
-  <Signin />
-  </>;
+  const [clubId, setClubId] = useState(null);
+
+  const handleClubIdChange = (id) => {
+    setClubId(id);
+  };
+
+  return (
+    <div>
+      <CreateClubForm onClubIdChange={handleClubIdChange} />
+      {clubId && <UserList clubId={clubId} />}
+    </div>
+  );
 }
 
 export default App;
-
-
