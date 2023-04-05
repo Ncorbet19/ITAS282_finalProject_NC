@@ -84,7 +84,7 @@ const CreateUserForm = () => {
       setExistingUserName("");
       setExistingEmail("");
       setError("");
-      setMessage("User created");
+      setMessage("User created go to your Club Dashboard");
     } catch (error) {
       console.error("Error creating user: ", error);
     }
