@@ -210,6 +210,16 @@ const LoginForm = () => {
         <h2>Login</h2>
         {error && <p style={{ color: errorColor }}>{error}</p>}
         <form onSubmit={handleSubmit} className="login-form">
+        <div>
+            <label htmlFor="text">User Name:</label>
+            <input
+              type="text"
+              id="userName"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              required
+            />
+          </div>
           <div>
             <label htmlFor="email">Email:</label>
             <input

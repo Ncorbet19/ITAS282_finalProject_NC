@@ -37,7 +37,7 @@ const CreateUserForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+  
     // Check if userName already exists
     const usersRef = collection(db, "users");
     const userNameQuery = query(
@@ -53,7 +53,7 @@ const CreateUserForm = () => {
       setError("");
       return;
     }
-
+  
     // Check if email already exists
     const emailQuery = query(usersRef, where("email", "==", email));
     const emailSnapshot = await getDocs(emailQuery);
@@ -65,31 +65,41 @@ const CreateUserForm = () => {
       setError("");
       return;
     }
-
+  
+    // Check if password is valid
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters long");
+      return;
+    }
+  
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
       console.log("User created with ID: ", user.uid);
-      
+  
       const docRef = await addDoc(usersRef, {
         userName: userName.toLowerCase(),
         email: email,
-        uid: user.uid // Add the UID to the user document
+        uid: user.uid, // Add the UID to the user document
       });
       console.log("Document written with ID: ", docRef.id);
-      
+  
       setUserName("");
       setEmail("");
       setPassword("");
       setExistingUserName("");
       setExistingEmail("");
       setError("");
-      setMessage("User created");
+      setMessage("User created go to your Club Dashboard");
     } catch (error) {
       console.error("Error creating user: ", error);
     }
-    
   };
+  
 
   const [moviePosters, setMoviePosters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -216,6 +226,9 @@ const CreateUserForm = () => {
   useEffect(() => {
     fetchRandomMovies();
   }, []);
+
+
+
 
   return (
     <div>

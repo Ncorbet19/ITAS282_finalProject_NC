@@ -42,7 +42,9 @@ const ClubDetail = ({ clubName, movieId }) => {
   const localizer = momentLocalizer(moment);
   const [showMovieForm, setShowMovieForm] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null); //just added
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [searchStarted, setSearchStarted] = useState(false);
+
 
   const onSuggestionsFetchRequested = async ({ value }) => {
     const newSuggestions = await getSuggestions(value);
@@ -71,6 +73,8 @@ const ClubDetail = ({ clubName, movieId }) => {
 
   useEffect(() => {
     const fetchAllUsers = async () => {
+      if (!searchStarted) return; // Do not fetch users until search has started
+
       const usersRef = collection(db, "users");
       const allUsersSnapshot = await getDocs(usersRef);
       const users = allUsersSnapshot.docs.map((doc) => doc.data());
@@ -78,7 +82,12 @@ const ClubDetail = ({ clubName, movieId }) => {
     };
 
     fetchAllUsers();
-  }, []);
+  }, [searchStarted]); // Fetch users when search has started
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    if (!searchStarted) setSearchStarted(true); // Set searchStarted to true when user starts searching
+  };
 
   useEffect(() => {
     const eventsArray = movies.map((movie) => {
@@ -100,21 +109,6 @@ const ClubDetail = ({ clubName, movieId }) => {
     setShowUsers(!showUsers);
   };
 
-  // const handleRemoveUser = async (userId, clubName) => {
-  //   const clubsRef = collection(db, "clubs");
-  //   const clubsQuery = query(clubsRef, where("name", "==", clubName));
-  //   const clubsSnapshot = await getDocs(clubsQuery);
-
-  //   if (clubsSnapshot.empty) return;
-
-  //   clubsSnapshot.forEach(async (doc) => {
-  //     const clubRef = doc.ref;
-  //     const data = doc.data();
-  //     const updatedUsers = arrayRemove(data.users, userId);
-  //     await updateDoc(clubRef, { users: updatedUsers });
-  //     setClubUsers(updatedUsers);
-  //   });
-  // };
 
   const handleRemoveUser = async (userNameToRemove, clubName) => {
     const clubsRef = collection(db, "clubs");
@@ -153,9 +147,9 @@ const ClubDetail = ({ clubName, movieId }) => {
     });
   };
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  // const handleSearchChange = (event) => {
+  //   setSearchTerm(event.target.value);
+  // };
 
   const generateMovieId = () => {
     return `movie_${Math.random().toString(36).substr(2, 9)}`;
@@ -475,7 +469,7 @@ const ClubDetail = ({ clubName, movieId }) => {
                 onChange={handleSearchChange}
               />
               <ul>
-                {filteredNonClubUsers.map((user) => (
+                {filteredNonClubUsers.slice(0, 5).map((user) => (
                   <li key={user.id} class="user-list-item">
                     {user.userName}{" "}
                     <button

@@ -24,6 +24,7 @@ function App() {
      <Router>
         <Header />
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/CommunityClubs" element={<CommunityClubs />} />
           <Route path="/signup" element={<CreateUserForm clubId={clubId} />} />
