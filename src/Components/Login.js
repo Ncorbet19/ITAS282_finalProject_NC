@@ -221,6 +221,16 @@ const LoginForm = () => {
             />
           </div>
           <div>
+            <label htmlFor="text">User Name:</label>
+            <input
+              type="text"
+              id="userName"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
             <label htmlFor="email">Email:</label>
             <input
               type="email"
