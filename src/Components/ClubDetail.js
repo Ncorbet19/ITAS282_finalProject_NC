@@ -186,7 +186,7 @@ const ClubDetail = ({ clubName, movieId }) => {
   );
 
   const [moviesWithPosters, setMoviesWithPosters] = useState([]);
-  const apiKey = "74915c59g";//remove g for the right key
+  const apiKey = "74915c59";//remove g for the right key
 
   useEffect(() => {
     const fetchMoviePosters = async () => {
