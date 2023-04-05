@@ -21,6 +21,17 @@ const LoginForm = () => {
 
   const [errorColor, setErrorColor] = useState("black");
 
+  const getUserNameByEmail = async (email) => {
+    const usersSnapshot = await getDocs(
+      query(collection(db, "users"), where("email", "==", email))
+    );
+    if (usersSnapshot.docs.length > 0) {
+      return usersSnapshot.docs[0].data().userName;
+    }
+    return null;
+  };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -31,14 +42,24 @@ const LoginForm = () => {
         password
       );
       const user = userCredential.user;
-      console.log("User logged in with ID: ", user.uid);
-      setLoggedIn(true); // set loggedIn to true after successful login
-      setUserId(user.uid);
+      const storedUserName = await getUserNameByEmail(email);
+  
+      if (storedUserName === userName) {
+        console.log("User logged in with ID: ", user.uid);
+        setLoggedIn(true); // set loggedIn to true after successful login
+        setUserId(user.uid);
+        setError(""); // Clear any previous error messages
+      } else {
+        setError("The user name you entered is not associated with that email.");
+        setErrorColor("red");
+      }
     } catch (error) {
       console.error("Error logging in: ", error);
       setError(error.message);
+      setErrorColor("red");
     }
   };
+  
 
   const fetchClubNames = async (userName) => {
     const clubsSnapshot = await getDocs(collection(db, "clubs"));
