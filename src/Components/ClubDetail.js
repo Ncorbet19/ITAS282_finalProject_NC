@@ -147,9 +147,6 @@ const ClubDetail = ({ clubName, movieId }) => {
     });
   };
 
-  // const handleSearchChange = (event) => {
-  //   setSearchTerm(event.target.value);
-  // };
 
   const generateMovieId = () => {
     return `movie_${Math.random().toString(36).substr(2, 9)}`;
@@ -189,7 +186,7 @@ const ClubDetail = ({ clubName, movieId }) => {
   );
 
   const [moviesWithPosters, setMoviesWithPosters] = useState([]);
-  const apiKey = "74915c59";
+  const apiKey = "74915c59g";//remove g for the right key
 
   useEffect(() => {
     const fetchMoviePosters = async () => {
