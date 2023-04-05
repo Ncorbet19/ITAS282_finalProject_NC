@@ -1,7 +1,0 @@
-[
-    { 
-        "key": "shift+cmd+9",
-        "command": "copilot-labs.use-brush-picker",
-        "when": "editorTextFocus"
-    }
-]
