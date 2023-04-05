@@ -11,7 +11,7 @@ function MovieDetails(props) {
     // Fetch movie data from OMDb API
     const fetchMovieData = async () => {
       const response = await fetch(
-        `http://www.omdbapi.com/?t=${movieTitle}&apikey=6366d68c`
+        `http://www.omdbapi.com/?t=${movieTitle}&apikey=74915c59`
       );
       const data = await response.json();
       setMovieData(data);
