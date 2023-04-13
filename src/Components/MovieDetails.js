@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../css/MoviesDetails.css"
 import "./ClubDetail.js"
+import { db } from "../firebase";
+
+
 
 function MovieDetails(props) {
   const { event, onDelete } = props;
@@ -51,6 +54,7 @@ function MovieDetails(props) {
     movieId: event.id,
   };
   
+
 
   return (
     <div className="card">

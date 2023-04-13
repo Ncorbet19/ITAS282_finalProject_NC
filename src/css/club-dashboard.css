@@ -391,3 +391,36 @@ form label {
     background-color: #565e64;
   }
   
+  .delete-club-btn {
+    background-color: #ff0000;
+    color: white;
+    padding: 10px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    margin-left: 5px;
+  }
+
+  .delete-club-btn:hover {
+    background-color: #900000;
+
+  }
+
+
+  @media screen and (max-width: 768px) {
+    .login-form-wrapper {
+      position: static;
+      max-width: none;
+      margin-bottom: 20px;
+    }
+  
+    .other-content-wrapper {
+      position: static;
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+  

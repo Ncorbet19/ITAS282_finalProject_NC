@@ -8,7 +8,6 @@ import "../css/club-dashboard.css";
 import "../css/back.css";
 
 const LoginForm = () => {
-  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
@@ -18,8 +17,14 @@ const LoginForm = () => {
   const [showCreateClubForm, setShowCreateClubForm] = useState(false);
   const [newClubName, setNewClubName] = useState("");
   const [email, setEmail] = useState("");
-
+  const [storedUserName, setStoredUserName] = useState("");
   const [errorColor, setErrorColor] = useState("black");
+
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+const handleEventSelection = (event) => {
+  setSelectedEvent(event);
+};
 
   const getUserNameByEmail = async (email) => {
     const usersSnapshot = await getDocs(
@@ -30,7 +35,6 @@ const LoginForm = () => {
     }
     return null;
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,15 +46,16 @@ const LoginForm = () => {
         password
       );
       const user = userCredential.user;
-      const storedUserName = await getUserNameByEmail(email);
-  
-      if (storedUserName === userName) {
+      const storedName = await getUserNameByEmail(email);
+
+      if (storedName) {
         console.log("User logged in with ID: ", user.uid);
         setLoggedIn(true); // set loggedIn to true after successful login
         setUserId(user.uid);
+        setStoredUserName(storedName); // set the stored user name
         setError(""); // Clear any previous error messages
       } else {
-        setError("The user name you entered is not associated with that email.");
+        setError("There is no user associated with that email.");
         setErrorColor("red");
       }
     } catch (error) {
@@ -59,9 +64,8 @@ const LoginForm = () => {
       setErrorColor("red");
     }
   };
-  
 
-  const fetchClubNames = async (userName) => {
+  const fetchClubNames = async () => {
     const clubsSnapshot = await getDocs(collection(db, "clubs"));
     const names = [];
 
@@ -70,7 +74,7 @@ const LoginForm = () => {
 
       if (
         clubData.users &&
-        clubData.users.some((u) => u.userName === userName)
+        clubData.users.some((u) => u.userName === storedUserName)
       ) {
         names.push(clubData.name);
       }
@@ -80,26 +84,33 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
-    if (loggedIn && userName) {
-      fetchClubNames(userName).then((names) => {
+    if (loggedIn) {
+      fetchClubNames().then((names) => {
         setClubNames(names);
       });
     }
-  }, [loggedIn, userName]);
+  }, [loggedIn]);
 
   const handleCreateClub = async (e) => {
     e.preventDefault();
     const clubRef = collection(db, "clubs");
+    const clubQuery = query(clubRef, where("name", "==", newClubName));
+    const matchingClubs = await getDocs(clubQuery);
+    if (!matchingClubs.empty) {
+      alert(`A club with the name "${newClubName}" already exists!`);
+      return;
+    }
     await addDoc(clubRef, {
       name: newClubName,
       movies: [],
-      users: [{ id: userId, userName: userName }],
+      users: [{ id: userId, userName: storedUserName }],
     });
     setClubNames([...clubNames, newClubName]);
     setNewClubName("");
     setShowCreateClubForm(false);
     setSelectedClub(null); // close any open clubs
   };
+  
 
   const handleClubClick = (name) => {
     setSelectedClub(name);
@@ -114,93 +125,96 @@ const LoginForm = () => {
     const randomMovies = [
       "The Shawshank Redemption",
       "The Godfather",
-      "The Godfather: Part II",
-      "The Dark Knight",
-      "12 Angry Men",
-      "Schindler's List",
-      "The Lord of the Rings: The Return of the King",
       "Pulp Fiction",
-      "The Good, the Bad and the Ugly",
+      "Schindler's List",
+      "Inception",
+      "The Dark Knight",
       "Fight Club",
       "Forrest Gump",
-      "Inception",
-      "The Lord of the Rings: The Fellowship of the Ring",
-      "The Lord of the Rings: The Two Towers",
-      "Star Wars: Episode V - The Empire Strikes Back",
       "The Matrix",
       "Goodfellas",
-      "Saving Private Ryan",
-      "The Silence of the Lambs",
-      "Se7en",
-      "Gladiator",
-      "The Usual Suspects",
-      "American Beauty",
-      "The Green Mile",
-      "The Prestige",
-      "Interstellar",
-      "The Departed",
-      "Blade Runner",
-      "The Terminator",
-      "Alien",
-      "The Truman Show",
-      "The Social Network",
+      "City of God",
+      "The Godfather: Part II",
       "Eternal Sunshine of the Spotless Mind",
-      "Her",
-      "Amélie",
-      "La La Land",
+      "The Departed",
+      "Taxi Driver",
+      "The Prestige",
+      "No Country for Old Men",
+      "American Beauty",
+      "Gladiator",
+      "The Silence of the Lambs",
+      "Apocalypse Now",
+      "The Green Mile",
+      "The Pianist",
+      "12 Years a Slave",
+      "The Revenant",
+      "Parasite",
+      "The Wolf of Wall Street",
+      "The Sixth Sense",
+      "American History X",
+      "Interstellar",
       "Whiplash",
-      "The Grand Budapest Hotel",
-      "Pan's Labyrinth",
-      "Spirited Away",
-      "The Lion King",
-      "Finding Nemo",
-      "Up",
-      "Toy Story",
-      "The Incredibles",
-      "Monsters, Inc.",
-      "Ratatouille",
-      "WALL·E",
-      "Inside Out",
-      "The Avengers",
-      "The Dark Knight Rises",
-      "Iron Man",
-      "Spider-Man: Into the Spider-Verse",
-      "Black Panther",
-      "Wonder Woman",
-      "Jurassic Park",
-      "Avatar",
-      "2001: A Space Odyssey",
-      "Back to the Future",
-      "Star Wars: Episode IV - A New Hope",
-      "Indiana Jones and the Raiders of the Lost Ark",
-      "Jaws",
-      "E.T. the Extra-Terrestrial",
-      "The Shining",
-      "Psycho",
-      "Halloween",
-      "The Exorcist",
-      "Get Out",
-      "The Texas Chain Saw Massacre",
-      "Rosemary's Baby",
-      "The Witch",
-      "Hereditary",
-      "Midsommar",
-      "The Blair Witch Project",
-      "Paranormal Activity",
-      "It Follows",
-      "The Babadook",
-      "A Quiet Place",
-      "Us",
-      "The Lighthouse",
+      "Django Unchained",
+      "Saving Private Ryan",
+      "Cinema Paradiso",
+      "La La Land",
+      "Good Will Hunting",
+      "Trainspotting",
+      "Reservoir Dogs",
+      "Memento",
+      "One Flew Over the Cuckoo's Nest",
+      "Mulholland Drive",
+      "Fargo",
       "Moonlight",
+      "The Big Lebowski",
+      "A Clockwork Orange",
+      "The Usual Suspects",
+      "There Will Be Blood",
+      "Pan's Labyrinth",
+      "Blade Runner",
+      "The Grand Budapest Hotel",
+      "Oldboy",
+      "The Social Network",
+      "The Shining",
+      "Casablanca",
+      "Raging Bull",
+      "Scarface",
+      "Seven",
+      "Chinatown",
+      "Citizen Kane",
+      "Gone with the Wind",
+      "Amélie",
+      "Her",
+      "Lawrence of Arabia",
+      "Lost in Translation",
+      "Vertigo",
+      "Psycho",
+      "Rear Window",
+      "North by Northwest",
       "Birdman",
       "Boyhood",
-      "The Revenant",
-      "Mad Max: Fury Road",
-      "Memories of Murder",
-      "The Host",
-      "Grave of the Fireflies",
+      "Requiem for a Dream",
+      "The Royal Tenenbaums",
+      "Drive",
+      "Nightcrawler",
+      "Magnolia",
+      "Heat",
+      "The Great Escape",
+      "Donnie Darko",
+      "The Exorcist",
+      "Rosemary's Baby",
+      "The Seventh Seal",
+      "A Beautiful Mind",
+      "Life is Beautiful",
+      "Three Billboards Outside Ebbing, Missouri",
+      "The Truman Show",
+      "Spotlight",
+      "Manchester by the Sea",
+      "Get Out",
+      "The Shape of Water",
+      "Black Swan"
     ];
+    
     const movieDataPromises = randomMovies.map(async (movieTitle) => {
       const response = await fetch(
         `https://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(
@@ -231,16 +245,6 @@ const LoginForm = () => {
         <h2>Login</h2>
         {error && <p style={{ color: errorColor }}>{error}</p>}
         <form onSubmit={handleSubmit} className="login-form">
-        <div>
-            <label htmlFor="text">User Name:</label>
-            <input
-              type="text"
-              id="userName"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              required
-            />
-          </div>
           <div>
             <label htmlFor="email">Email:</label>
             <input
@@ -288,7 +292,7 @@ const LoginForm = () => {
           <div className="other-content-text">
             {selectedClub !== null && !showCreateClubForm && (
               <>
-                <ClubDetail clubName={selectedClub} />
+                <ClubDetail clubName={selectedClub} onClose={() => setSelectedEvent(null)}/>
               </>
             )}
             {selectedClub === null && !showCreateClubForm && (

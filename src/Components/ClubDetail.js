@@ -25,6 +25,8 @@ import { v4 as uuidv4 } from "uuid";
 
 // import MovieDetails from "./MovieDetails"; // just added
 import Modal from "./Modal"; //this too
+import { deleteDoc, doc } from "firebase/firestore";
+
 
 const ClubDetail = ({ clubName, movieId }) => {
   const [movies, setMovies] = useState([]);
@@ -44,6 +46,8 @@ const ClubDetail = ({ clubName, movieId }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [searchStarted, setSearchStarted] = useState(false);
+  const [deletePrompt, setDeletePrompt] = useState(false);
+
 
 
   const onSuggestionsFetchRequested = async ({ value }) => {
@@ -147,6 +151,9 @@ const ClubDetail = ({ clubName, movieId }) => {
     });
   };
 
+  // const handleSearchChange = (event) => {
+  //   setSearchTerm(event.target.value);
+  // };
 
   const generateMovieId = () => {
     return `movie_${Math.random().toString(36).substr(2, 9)}`;
@@ -267,6 +274,58 @@ const ClubDetail = ({ clubName, movieId }) => {
     });
   };
 
+
+  const handleDeleteClub = async () => {
+    if (!deletePrompt) {
+      setDeletePrompt(true);
+      return;
+    }
+  
+    const confirmMessage = prompt("Type the club name to confirm deletion:");
+    if (confirmMessage === null || confirmMessage === "" || confirmMessage.toLowerCase() !== clubName.toLowerCase()) {
+      setDeletePrompt(false);
+      alert("Club name did not match. Deletion canceled.");
+      return;
+    }
+  
+    try {
+      const clubsRef = collection(db, "clubs");
+      const clubQuery = query(clubsRef, where("name", "==", clubName));
+      const clubSnapshot = await getDocs(clubQuery);
+      clubSnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+        alert(`Club ${clubName} deleted successfully.`);
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error("Error deleting club:", error);
+      alert(`Error deleting club: ${error.message}`);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeletePrompt(false);
+  };
+  
+
+  const onClose = () => {
+    setSelectedEvent(null);
+  };
+  
+
+  
+    // Call the onClose prop when the club changes
+    useEffect(() => {
+      // Clear the movies state array when a different club is selected
+      setMovies([]);
+  
+      // Close the modal when a different club is selected
+      if (onClose) {
+        onClose();
+      }
+    }, [clubName]);
+  
+
   return (
     <div className="club-detail">
       <div
@@ -350,7 +409,7 @@ const ClubDetail = ({ clubName, movieId }) => {
             />
           </div>
           {selectedEvent && (
-            <Modal onClose={() => setSelectedEvent(null)}>
+            <Modal onClose={onClose}>
               <MovieDetails
                 event={selectedEvent}
                 onRemoveMovie={handleRemoveMovie}
@@ -487,6 +546,12 @@ const ClubDetail = ({ clubName, movieId }) => {
             onClick={() => setIsEditingUsers(!isEditingUsers)}
           >
             {isEditingUsers ? "Finish Editing Users" : "Edit Users"}
+          </button>
+          <button
+            class="delete-club-btn"
+            onClick={() => handleDeleteClub(clubName)}
+          >
+            Delete Club
           </button>
         </>
       </div>
