@@ -12,6 +12,7 @@
     "firebase": "^9.17.1",
     "react": "^18.2.0",
     "react-autosuggest": "^10.1.0",
+    "react-big-calendar": "^1.6.9",
     "react-dom": "^18.2.0",
     "react-hook-form": "7.34.2",
     "react-image": "^4.1.0",
@@ -43,5 +44,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.21.2",
+    "@babel/preset-env": "^7.21.4",
+    "babel-jest": "^29.5.0"
+  },
+  "transform": {
+    "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "babel-jest"
   }
 }
